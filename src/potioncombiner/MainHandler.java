@@ -2,6 +2,8 @@ package potioncombiner;
 
 //import org.tbot.client.GameObject;
 import org.tbot.internal.AbstractScript;
+import org.tbot.internal.Manifest;
+import org.tbot.internal.ScriptCategory;
 import org.tbot.internal.handlers.LogHandler;
 import org.tbot.methods.*;
 import org.tbot.methods.tabs.Inventory;
@@ -14,6 +16,8 @@ import org.tbot.wrappers.Item;
 /**
  * Created by Igor on 010. Apr 10, 15.
  */
+
+@Manifest(authors = "Igor", name = "Potion Combiner", category = ScriptCategory.HERBLORE)
 public class MainHandler extends AbstractScript {
 
     public boolean onStart(){
@@ -46,12 +50,7 @@ public class MainHandler extends AbstractScript {
             for(int y=0; y<3; y++){
                 potToFill = Inventory.getInSlot(x+y+1);
                 Inventory.useItemOn(potToEmpty, potToFill);
-                Time.sleepUntil(new Condition() {
-                    @Override
-                    public boolean check(){
-                        return Players.getLocal().getAnimation() == -1;
-                    }
-                }, Random.nextInt(1400,1500));
+                Time.sleep(550,700);
             }
         }
     }
