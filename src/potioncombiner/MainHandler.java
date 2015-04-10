@@ -17,6 +17,23 @@ public class MainHandler extends AbstractScript {
     @Override
     public int loop() {
 
+        if (Bank.isOpen()) {
+            //Deposit All
+            //IF Energy Potion(3) Found
+                //Withdraw All
+                //Close bank screen
+            //ELSE
+                //PRINT "No energy potions"
+                //STOP SCRIPT
+        }
+        else if(!(Bank.isOpen())){
+
+        }
+
+
+
+
+
         return 120;
     }
 }
