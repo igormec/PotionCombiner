@@ -32,7 +32,7 @@ public class MainHandler extends AbstractScript {
         LogHandler.log("Potion Combiner started");
         LogHandler.log("Creating new UI");
         GUI g = new GUI();
-        g.display();
+        g.setVisible(true);
         LogHandler.log("Returning from onStart");
         return true;
     }
