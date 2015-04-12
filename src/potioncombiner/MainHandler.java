@@ -1,6 +1,7 @@
 package potioncombiner;
 
 //import org.tbot.client.GameObject;
+import org.tbot.gui.frame.TFrame;
 import org.tbot.internal.AbstractScript;
 import org.tbot.internal.Manifest;
 import org.tbot.internal.ScriptCategory;
@@ -13,17 +14,29 @@ import org.tbot.util.Condition;
 import org.tbot.wrappers.GameObject;
 import org.tbot.wrappers.Item;
 
+import javax.swing.*;
+
 /**
  * Created by Igor on 010. Apr 10, 15.
  */
 
-@Manifest(authors = "Igor", name = "Potion Combiner", category = ScriptCategory.HERBLORE)
+@Manifest(authors = "Igor", name = "Potion Combiner", category = ScriptCategory.HERBLORE, description = "Combines (3) doses to (4) doses.", version = 1.0)
 public class MainHandler extends AbstractScript {
+
+
+
+    //TFrame fr = new TFrame(5,100);
+
 
     public boolean onStart(){
         LogHandler.log("Potion Combiner started");
+        LogHandler.log("Creating new UI");
+        GUI g = new GUI();
+        g.display();
+        LogHandler.log("Returning from onStart");
         return true;
     }
+
 
     public void withdrawPots(String potType, int amount){
         //WITHDRAW CODE
@@ -50,7 +63,7 @@ public class MainHandler extends AbstractScript {
             for(int y=0; y<3; y++){
                 potToFill = Inventory.getInSlot(x+y+1);
                 Inventory.useItemOn(potToEmpty, potToFill);
-                Time.sleep(550,700);
+                Time.sleep(600,750);
             }
         }
     }
@@ -60,47 +73,47 @@ public class MainHandler extends AbstractScript {
     @Override
     public int loop() {
 
+        ///***NOTE***///  Add: if bank is closed and inventory is empty, open bank(Open bank logic should be separate method)
+
+
+    /*
         if (Bank.isOpen()) {
             //Deposit All
-            if(Inventory.getEmptySlots()<28){
-                if(Bank.depositAll()){
-                    Time.sleepUntil(new Condition() {
-                                        @Override
-                                        public boolean check() {
-                                            return Inventory.getEmptySlots() == 28;
-                                        }
-                                    },
-                            Random.nextInt(850,1000)
-                    );
-                }
+            if (Inventory.getEmptySlots() < 28) {
+                Bank.depositAll();
+                Time.sleep(Random.nextInt(1100, 1300));
             }
 
-            withdrawPots("Energy potion(3)",28);
+            withdrawPots("Prayer potion(3)", 28);
+            Time.sleep(850, 1000);
             combinePots();
 
 
-
-
-
-        }
-        else if(!(Bank.isOpen())){
+        } else if (!Bank.isOpen()) {
             final GameObject bankBooth = GameObjects.getNearest("Bank booth");
 
             if (bankBooth != null && bankBooth.isOnScreen()) {
                 if (Players.getLocal().getAnimation() == -1) {
-                    if (bankBooth.interact("Bank")) {
-                        Time.sleepUntil(new Condition() {
-                                            @Override
-                                            public boolean check() {
-                                                return Bank.isOpen();
-                                            }
-                                        },
-                                Random.nextInt(1200, 1600)
-                        );
-                    }
+                    Time.sleepUntil(new Condition() {
+                                        @Override
+                                        public boolean check() {
+                                            return Players.getLocal().getAnimation() == -1;
+                                        }
+                                    },
+                            Random.nextInt(2000, 2500)
+                    );
+                    bankBooth.interact("Bank");
+                    Time.sleepUntil(new Condition() {
+                                        @Override
+                                        public boolean check() {
+                                            return Bank.isOpen();
+                                        }
+                                    },
+                            Random.nextInt(1200, 1600)
+                    );
+
                 }
-            }
-            else if (bankBooth != null && !(bankBooth.isOnScreen())) {
+            } else if (bankBooth != null && !(bankBooth.isOnScreen())) {
                 if (bankBooth.distance() > 6) {
                     Path pathToBooth = Walking.findPath(bankBooth);
                     if (pathToBooth != null) {
@@ -110,25 +123,40 @@ public class MainHandler extends AbstractScript {
                                             public boolean check() {
                                                 return bankBooth.distance() < 6 || bankBooth.isOnScreen();
                                             }
-                                        },
-                                Random.nextInt(900, 1150)
+                                        }, Random.nextInt(2800, 3000)
                         );
                     }
                 } else if (bankBooth.distance() <= 6) {
                     Camera.turnTo(bankBooth);
-                    Time.sleep(300, 420);
+                    Time.sleep(800, 1000);
+                    Path pathToBooth = Walking.findPath(bankBooth);
+                    if (pathToBooth != null) {
+                        pathToBooth.traverse();
+                        Time.sleepUntil(new Condition() {
+                                            @Override
+                                            public boolean check() {
+                                                return bankBooth.isOnScreen();
+                                            }
+                                        },
+                                Random.nextInt(2800, 3000)
+                        );
+                        bankBooth.interact("Bank");
+                        Time.sleepUntil(new Condition() {
+                                            @Override
+                                            public boolean check() {
+                                                return Bank.isOpen();
+                                            }
+                                        },
+                                Random.nextInt(1200, 1600)
+                        );
+                    }
+                } else if (bankBooth == null) {
+
+                    LogHandler.log("bankBooth is null");
                 }
             }
-            else if (bankBooth == null) {
-
-                LogHandler.log("bankBooth is null");
-            }
-        }
-
-
-
-
-
-        return 100;
+        }*/
+        LogHandler.log("Returning from main loop");
+        return -1;
     }
 }
