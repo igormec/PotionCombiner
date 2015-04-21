@@ -88,6 +88,9 @@ public class MainHandler extends AbstractScript {
     //Uses slot grabbing (Rewrite for more modular design)
     //Requires Full inventory of potions
     public void combinePots(){
+        LogHandler.log("Time to combine potions.");
+        Time.sleep(1000);
+
         //String[] pots = {"", "Energy potion(1)", "Energy potion(2)", "Energy potion(3)", "Energy potion(4)"};
         Item potToEmpty, potToFill;
         for(int x=0; x<=24; x+=4){
@@ -98,6 +101,10 @@ public class MainHandler extends AbstractScript {
                 Time.sleep(600,750);
             }
         }
+
+        LogHandler.log("Potion combining COMPLETE.");
+        Time.sleep(1000);
+
     }
 
 
@@ -159,10 +166,63 @@ public class MainHandler extends AbstractScript {
 
 
         } else if (!Bank.isOpen()) {
+
+            LogHandler.log("Bank screen is not open.");
+            Time.sleep(1000);
+
+            LogHandler.log("Searching for nearest bank booth");
+            Time.sleep(1000);
+
             final GameObject bankBooth = GameObjects.getNearest("Bank booth");
 
+
             if (bankBooth != null && bankBooth.isOnScreen()) {
+
+                LogHandler.log("Bank booth FOUND ON SCREEN");
+                Time.sleep(1000);
+
                 if (Players.getLocal().getAnimation() == -1) {
+
+                    LogHandler.log("Player is idle.");
+                    Time.sleep(1000);
+
+                    /*Time.sleepUntil(new Condition() {
+                                        @Override
+                                        public boolean check() {
+                                            return Players.getLocal().getAnimation() == -1;
+                                        }
+                                    },
+                            Random.nextInt(2000, 2500)
+                    );*/
+
+                    LogHandler.log("Opening bank");
+                    Time.sleep(1000);
+
+                    bankBooth.interact("Bank");
+                    Time.sleepUntil(new Condition() {
+                                        @Override
+                                        public boolean check() {
+                                            return Bank.isOpen();
+                                        }
+                                    },
+                            Random.nextInt(3000, 4000)
+                    );
+                    if(Bank.isOpen()){
+
+                        LogHandler.log("Bank screen is now OPEN.");
+                        Time.sleep(1000);
+
+                    }else{
+
+                        LogHandler.log("Bank has not been opened.");
+                        Time.sleep(1000);
+
+                    }
+
+                }else{
+
+                    LogHandler.log("Player not Idle, waiting");
+                    //Time.sleep(1000);
                     Time.sleepUntil(new Condition() {
                                         @Override
                                         public boolean check() {
@@ -171,21 +231,24 @@ public class MainHandler extends AbstractScript {
                                     },
                             Random.nextInt(2000, 2500)
                     );
-                    bankBooth.interact("Bank");
-                    Time.sleepUntil(new Condition() {
-                                        @Override
-                                        public boolean check() {
-                                            return Bank.isOpen();
-                                        }
-                                    },
-                            Random.nextInt(1200, 1600)
-                    );
 
                 }
             } else if (bankBooth != null && !(bankBooth.isOnScreen())) {
+
+                LogHandler.log("Bank FOUND NOT ON SCREEN.");
+                Time.sleep(500);
+
                 if (bankBooth.distance() > 6) {
+
+                    LogHandler.log("Bank is further than 6 tiles. Searching for path to bank booth...");
+                    Time.sleep(500);
+
                     Path pathToBooth = Walking.findPath(bankBooth);
                     if (pathToBooth != null) {
+
+                        LogHandler.log("Path Found. Begin walking.");
+                        Time.sleep(250);
+
                         pathToBooth.traverse();
                         Time.sleepUntil(new Condition() {
                                             @Override
@@ -194,21 +257,46 @@ public class MainHandler extends AbstractScript {
                                             }
                                         }, Random.nextInt(2800, 3000)
                         );
+
+                        if(bankBooth.distance() < 6){
+
+                            LogHandler.log("Distance is less tan 6 tiles.");
+                            Time.sleep(750);
+
+                        }else if(bankBooth.isOnScreen()){
+
+                            LogHandler.log("Bank booth is on screen.");
+                            Time.sleep(1000);
+
+                        }else{
+
+                            LogHandler.log("Bank booth is still too far and not on screen.");
+                            Time.sleep(1000);
+
+                        }
                     }
                 } else if (bankBooth.distance() <= 6) {
+
+                    LogHandler.log("Distance to bank booth is less than 6 tiles, turning camera.");
+                    Time.sleep(250);
+
                     Camera.turnTo(bankBooth);
-                    Time.sleep(800, 1000);
+                    Time.sleep(1200, 1600);
+
+                    LogHandler.log("Searching for path...");
+                    Time.sleep(500);
+
                     Path pathToBooth = Walking.findPath(bankBooth);
                     if (pathToBooth != null) {
-                        pathToBooth.traverse();
-                        Time.sleepUntil(new Condition() {
-                                            @Override
-                                            public boolean check() {
-                                                return bankBooth.isOnScreen();
-                                            }
-                                        },
-                                Random.nextInt(2800, 3000)
-                        );
+
+                        LogHandler.log("Path FOUND. Beginning walk");
+                        Time.sleep(250);
+
+                        pathToBooth.traverse();/***********************/
+
+                        Time.sleep(2000);
+                        LogHandler.log("Opening bank");
+
                         bankBooth.interact("Bank");
                         Time.sleepUntil(new Condition() {
                                             @Override
@@ -216,16 +304,31 @@ public class MainHandler extends AbstractScript {
                                                 return Bank.isOpen();
                                             }
                                         },
-                                Random.nextInt(1200, 1600)
+                                Random.nextInt(3000, 4000)
                         );
+                        if(Bank.isOpen()){
+
+                            LogHandler.log("Bank screen is now OPEN.");
+                            Time.sleep(1000);
+
+                        }else{
+
+                            LogHandler.log("Bank has not been opened.");
+                            Time.sleep(1000);
+
+                        }
                     }
                 } else if (bankBooth == null) {
 
-                    LogHandler.log("bankBooth is null");
+                    LogHandler.log("Could not find bank booth.");
                 }
             }
         }
-        //LogHandler.log("Returning from main loop");
+        else{
+            LogHandler.log("Apparently the bank screen is neither open or closed.....");
+            Time.sleep(1000);
+        }
+        LogHandler.log("Exiting main loop");
         return -1;
     }
 }
