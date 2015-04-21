@@ -14,6 +14,7 @@ import org.tbot.util.Condition;
 import org.tbot.wrappers.GameObject;
 import org.tbot.wrappers.Item;
 
+
 import javax.swing.*;
 
 /**
@@ -24,32 +25,63 @@ import javax.swing.*;
 public class MainHandler extends AbstractScript {
 
 
-
+    //String potionChoice = "";
     //TFrame fr = new TFrame(5,100);
 
-
-    public boolean onStart(){
+    //boolean pressed = false;
+    public boolean onStart() {
         LogHandler.log("Potion Combiner started");
-        LogHandler.log("Creating new UI");
-        GUI g = new GUI();
-        g.setVisible(true);
-        LogHandler.log("Returning from onStart");
+        //LogHandler.log("Creating new UI");
+        //GUI g = new GUI();
+        //g.setVisible(true);
+        //pressed = g.getButtonPressed();
+
+        /*Time.sleepUntil(new Condition() {
+            @Override
+            public boolean check() {
+                return pressed;
+            }
+        });*/
+        //LogHandler.log("Returning from onStart");
         return true;
     }
 
 
-    public void withdrawPots(String potType, int amount){
+    public boolean withdrawPots(String potType, int amount){
         //WITHDRAW CODE
 
         if(Bank.contains(potType)) {            //IF Energy Potion(3) Found
+
+            LogHandler.log("Prayer potions(3) FOUND.");
+            Time.sleep(1000);
+
+
+            LogHandler.log("Withdrawing prayer potions(3).");
+            Time.sleep(1000);
+
             Bank.withdraw(potType, amount);     //Withdraw All
+
+            LogHandler.log("Potions WITHDRAWN.");
+            Time.sleep(1000);
+
+
+            LogHandler.log("Closing bank");
+            Time.sleep(1000);
+
             Bank.close();                       //Close bank screen
+
+
+            LogHandler.log("Bank closed");
+            Time.sleep(1000);
+
+            return true;
+
         }else if(!Bank.contains(potType)){
-            LogHandler.log("No energy potions, stopping script.");  //PRINT "No energy potions"
-            //return -1;//STOP SCRIPT
+            LogHandler.log("Potions NOT FOUND! Stopping script.");  //PRINT "No energy potions"
+            return false;//STOP SCRIPT
         }else {
             LogHandler.log("Unknown error, stopping script.");  //PRINT "No energy potions"
-            //return -1;//STOP SCRIPT
+            return false;//STOP SCRIPT
         }
     }
 
@@ -76,16 +108,53 @@ public class MainHandler extends AbstractScript {
         ///***NOTE***///  Add: if bank is closed and inventory is empty, open bank(Open bank logic should be separate method)
 
 
-    /*
+
         if (Bank.isOpen()) {
+            LogHandler.log("The bank window is already open.");
+            Time.sleep(1000);
+
+
             //Deposit All
-            if (Inventory.getEmptySlots() < 28) {
+            int inv = Inventory.getEmptySlots();
+            if (inv < 28) {
+
+
+                LogHandler.log("There are only "+inv+" empty slots. Inventory not empty.");
+                Time.sleep(1000);
+
+
                 Bank.depositAll();
+
+                inv = Inventory.getEmptySlots();
+                LogHandler.log("There are now "+inv+" empty slots in the inventory.");
+                Time.sleep(1000);
+
                 Time.sleep(Random.nextInt(1100, 1300));
             }
 
-            withdrawPots("Prayer potion(3)", 28);
+            LogHandler.log(inv+" empty slots in the inventory.");
+            Time.sleep(1000);
+
+            LogHandler.log("Calling Withdraw method.");
+            Time.sleep(1000);
+
+            if(withdrawPots("Prayer potion(3)", 28)){
+
+                LogHandler.log("Potion withdrawal SUCCESSFUL!");
+                Time.sleep(1000);
+
+            }else{
+                LogHandler.log("Potion withdrawal FAILED!");
+                Time.sleep(1000);
+                return -1;
+            }
             Time.sleep(850, 1000);
+
+
+            LogHandler.log("Calling combine pots method.");
+            Time.sleep(1000);
+
+
             combinePots();
 
 
@@ -155,8 +224,8 @@ public class MainHandler extends AbstractScript {
                     LogHandler.log("bankBooth is null");
                 }
             }
-        }*/
-        LogHandler.log("Returning from main loop");
+        }
+        //LogHandler.log("Returning from main loop");
         return -1;
     }
 }

@@ -4,8 +4,7 @@ import org.tbot.internal.handlers.LogHandler;
 
 import java.awt.Container;
 import java.awt.EventQueue;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.*;
 import java.awt.event.ItemListener;
 import javax.swing.*;
@@ -19,6 +18,9 @@ import javax.swing.border.EmptyBorder;
  */
 public class GUI extends JFrame implements ItemListener {
 
+    private String selected;
+    public String finalChoice;
+    public boolean buttonPressed;
     private JComboBox<String> box;
     private String[] potionList = {"Attack potion(3)", "Antipoison(3)", "Strength potion(3)", "Restore potion(3)", "Guthix Balance(3)?", "Energy potion(3)",
             "Defence potion(3)", "Agility potion(3)", "Combat potion(3)", "Prayer potion(3)", "Super attack(3)", "Superantipoison(3)", "Fishing potion(3)",
@@ -32,6 +34,10 @@ public class GUI extends JFrame implements ItemListener {
         initUI();
     }
     private void initUI() {
+
+        buttonPressed = false;
+        selected = "";
+        finalChoice = "";
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -60,7 +66,14 @@ public class GUI extends JFrame implements ItemListener {
         bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
         bottom.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10)));
         JButton start = new JButton("START");
-        //start.addItemListener(this);
+        start.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //finalChoice = " ";
+                LogHandler.log("Button pressed");
+                buttonPressed = getButtonPressed();
+            }
+        });
         bottom.add(start);
 
         panel.add(top);
@@ -72,9 +85,13 @@ public class GUI extends JFrame implements ItemListener {
 
         setTitle("Select Potion");
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         pack();
+
+        //panel.setVisible(true);
+
+        //waitt();
 
     }
 
@@ -82,9 +99,33 @@ public class GUI extends JFrame implements ItemListener {
 
         if (e.getStateChange() == ItemEvent.SELECTED) {
             //display.setText(e.getItem().toString());
+            selected = e.getItem().toString();
             LogHandler.log("Item state changed to: "+e.getItem().toString());
         }
     }
+
+
+    public boolean getButtonPressed(){
+        return buttonPressed;
+    }
+
+    public void waitt(){
+        while(true){
+            if(buttonPressed){
+                break;
+            }
+        }
+        //return buttonPressed();
+    }
+
+    /*private class ClickAction extends AbstractAction{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }*/
+
 
 
     /*public void display(){
