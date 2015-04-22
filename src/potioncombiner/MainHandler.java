@@ -2,6 +2,7 @@ package potioncombiner;
 
 //import org.tbot.client.GameObject;
 
+import org.tbot.bot.TBot;
 import org.tbot.internal.AbstractScript;
 import org.tbot.internal.Manifest;
 import org.tbot.internal.ScriptCategory;
@@ -21,7 +22,7 @@ import javax.swing.*;
  * Created by Igor on 010. Apr 10, 15.
  */
 
-@Manifest(authors = "Igor", name = "Potion Combiner", category = ScriptCategory.HERBLORE, description = "Combines (3) doses to (4) doses.", version = 1.0)
+@Manifest(authors = "Igor_mec", name = "Potion Combiner", category = ScriptCategory.HERBLORE, description = "Combines (3) doses to (4) doses.", version = 1.0)
 public class MainHandler extends AbstractScript {
 
 
@@ -37,6 +38,13 @@ public class MainHandler extends AbstractScript {
     }
 
 
+    private void statusCheck(){
+        if(!TBot.getBot().getScriptHandler().getScript().isRunning()){
+
+        }
+    }
+
+
     public boolean withdrawPots(String potType, int amount){
         //WITHDRAW CODE
         if(Bank.getOpenTab()!=0){
@@ -48,16 +56,32 @@ public class MainHandler extends AbstractScript {
 
         if(containsPotType) {            //IF Energy Potion(3) Found
 
-            LogHandler.log(potType+" FOUND.");
+            LogHandler.log(potType + " FOUND.");
             Time.sleep(1000);
 
 
-            LogHandler.log("Withdrawing "+potType);
-            Time.sleep(200);
+           // do {
+                LogHandler.log("There are "+ Inventory.getCount());
+                LogHandler.log("Withdrawing " + potType);
+                Time.sleep(200);
 
-            Bank.withdraw(potType, amount);     //Withdraw All
-            Time.sleep(850,1000);
+                Bank.withdraw(potType, amount);     //Withdraw All
+                Time.sleep(850, 1000);
+            //}while(Inventory.getEmptySlots() != 0 /*|| Inventory.getCount() >= 1*/);
 
+            /*******
+             *
+             *
+             *
+             *
+             * ^^^^ ABOVE LOOP NEVER ENDS IF PERSON DOESN'T HAVE ENOUGH POTIONS
+             * CHECK TO MAKE SURE PLAYER HAS AT LEAST ONE POT ( ABOVE CONDITION or CONDITION TO THE LEFT
+             *
+             *
+             *
+             *
+             *
+             */
             LogHandler.log("Potions WITHDRAWN.");
             Time.sleep(750);
 
@@ -90,11 +114,20 @@ public class MainHandler extends AbstractScript {
 
         Item potToEmpty, potToFill;
         for(int x=0; x<=24; x+=4){
-            potToEmpty = Inventory.getInSlot(x);
-            for(int y=0; y<3; y++){
-                potToFill = Inventory.getInSlot(x+y+1);
-                Inventory.useItemOn(potToEmpty, potToFill);
-                Time.sleep(600,750);
+            if(TBot.getBot().getScriptHandler().getScript().isRunning()) {
+                potToEmpty = Inventory.getInSlot(x);
+                for (int y = 0; y < 3; y++) {
+                    if(TBot.getBot().getScriptHandler().getScript().isRunning()) {
+                        potToFill = Inventory.getInSlot(x + y + 1);
+                        Inventory.useItemOn(potToEmpty, potToFill);
+                        Time.sleep(600, 750);
+                        TBot.getBot().getScriptHandler().getScript().isRunning();
+                    }else{
+                        break;
+                    }
+                }
+            }else{
+                break;
             }
         }
 
@@ -127,6 +160,8 @@ public class MainHandler extends AbstractScript {
 
             //Deposit All
             int inv = Inventory.getEmptySlots();
+            LogHandler.log("There are: " + Inventory.getCount());
+
             if (inv < 28) {
 
                 LogHandler.log("There are only "+inv+" empty slots. Inventory not empty.");
